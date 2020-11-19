@@ -1,0 +1,1068 @@
+
+
+
+
+vimtutor   :lauches the vim tutorial
+
+
+set vim.hlsearch :to enable highlighted search
+
+Note	   :
+Most Linux distributions ship with a "minimal" Vim build by default, which doesn
+'t have +clipboard, but you can usually install it:
+
+    Debian & Ubuntu: Install vim-gtk or vim-gnome.
+    Fedora: install vim-X11, and run vimx instead of vim (more info).
+    Arch Linux: install gvim (this will enable +clipboard for normal vim as well).
+
+
+{{{{{{{{{{{{{{{{{{{{{
+
+	In my windows vim :  
+			shift+y  -  copy to system clipboard
+			shift+p  -  paste to vim from system clipboard
+      In my windows WSL vim:
+			y        - is programmed in vimrc to copy to windows system clipboard too
+		   Ctrl+Shift+c  - paste to vim from windows system clipboard
+
+
+			}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+
+
+
+""""""""""""""""""""""""""Change the next N characters in VIM""""""""""""""""""""""""
+3s, "substitute 3 characters" is the same as c3l. 3cl and c3l should be the same, I don't know why you'd see the same character repeated. I'm also a fan of using t, e.g. ct_ as another poster mentioned, then I don't have to count characters and can just type "del".
+
+
+
+""""""""""""""""""""""""""jumb between files""""""""""""""""""""""""""""""""""""""""
+
+
+https://medium.com/usevim/vim-101-jumping-between-files-f9e16f79f63a
+
+When in Normal mode, typing gf over text that refers to a file name will cause Vim to attempt to open that file. This is great when working with programming languages that include or require files relative to the current working directory
+
+:help gf		#shows help
+
+By default, however, gf needs a little bit of assistance to find files. Let's say you're working on a project that's written with Node. In Node, files are referred to like this:
+
+var textile = require('stextile')
+  , existsSync = require('./utils').existsSync
+  , exists = require('./utils').exists
+  , fs = require('./graceful')
+  , path = require('path')
+  , jade = require('jade')
+;
+
+The files that start with ./ are relative to the current file. If I move the cursor over ./utils and type gf, it should open ./utils.js, but it doesn't because Vim isn't aware that .js needs to be added. To help Vim figure out the file name, suffixesadd (abbreviation: sua, help: :help 'suffixesadd') can be used:
+
+:set suffixesadd+=.js
+
+Now if I type gf over require('./utils'), Vim will open ./utils.js as expected.
+
+
+
+Path
+
+The path Vim will search can also be changed. 
+
+To view the current path, type 
+:set path?. 
+
+To add a new path, type 
+:set path+=/path/to/includes. 
+
+The += operator will append paths rather than replacing the current value. Type :help 'path' to read more about paths.
+
+
+
+
+Quickly Opening Other Files
+
+
+If there’s a file you want to edit and you know the name, you can type 
+:find filename 
+(abbreviation: :fin, help: :help :find) to open it. 
+Vim will search the 'path' option for matching files and open one of them. 
+Providing a count argument causes Vim to open the next match, 
+so :2find file will open the second match.
+
+Typing :tabfind file (abbreviation: :tabf, help: :help :tabfind) will open the file in a new tab.
+
+Pressing the tab key after a partially typed file name makes Vim autocomplete based on the files in 'path', which is great when you forget the exact name of a file.
+
+example:
+
+set path=.,D:\github\portfo_django\portfo_django**\
+
+this allows to search recurcievely inside that directory
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+The following sequence will do what you want, given an already selected block of text:
+
+    y (yank the selected text, into the " register by default)
+    / (enter search mode)
+    (\ V) (optional, enter "very nomagic" mode*)
+    Ctrl+r " (insert text from " register)
+    Enter (Engage!)
+
+(*) "very no magic" mode interprets the following text as plain text instead 
+of as a regex. note however that \ and / are still special and will have
+ to be handled in other ways. If the text does not have any characters 
+considered special, you can skip this step.
+
+NOTE:if you want to search for text containing /
+	enter search mode using / and then put \ then start the text
+	which contains or starts with /
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+ctrl-6       :to navigate to the previously opened file(ctrl-shift-6)or(ctrl-^)
+
+
+
+""""""""""""""""""""""vim native fuzzy search""""""""""""""""""""""""""""
+" Show file options above the command line
+set wildmenu
+
+
+
+
+:vs **/*<partial file name><Tab>                        
+This will search the current directory and all directories below it for 
+filenames containing your partial search. This can be used with :e, :sp, :vsp.
+
+:e .<Tab>         :this wil display all files in open files directory
+
+:e ..\..\<Tab>    :display subdirectories down 2 directory levels
+
+:e ..\..\**/*<partial file><Tab>   :searches for the partial file in subdirectories down 2 directory levels
+
+
+
+
+" Set the working directory to wherever the open file lives
+set autochdir
+:set autochdir!  -to turn it off
+
+
+" `gf` opens file under cursor in a new vertical split
+nnoremap gf :vertical wincmd f<CR>
+When your cursor is over a path to a different file, hitting gf (go to file) will 
+open it in a new split window. This helps you quickly explore the project based on its depedencies.
+
+
+we can find things inside of files across our entire project by doing this:
+:Ack --html 'button'
+
+:cdo %s/btn/button/gc | update
+
+    :cdo tells Vim to do something across all items in our Quickfix list.
+    %s/button/btn/ tells Vim to look at every line (%) and substitite all instances of button for btn.
+    gc tells Vim to do this globally on each line and asks us, the developer, to manually confirm the change.
+    | update tells Vim to update the Quickfix list after making changes
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+How to give multiples command at same time?
+:w | make | cw
+
+
+How do I replace a word in vi editor globally?
+:s/foo/bar/g		 to replace all occurrences of the word foo on the current
+ 			 line with the word bar. 
+:%s/foo/bar/g 		 to replace all occurrences of the 
+			 word foo in the current file with the word bar.
+			 Leaving off the g at the end 
+ 			 only replaces the first occurrence of foo on each line of the current file.
+"""""""""""""tabs""""""""""""""""""""
+
+:tabedit fileq              :open a new tab and take you to edit fileq
+gt                          :to go to nex tab
+gT                          :to go to previous tab
+:tabedit                    :open tabedit mode
+2gt                         :to go to 2nd next tab
+:tabclose		    :to close a single tab
+:tabonly 		    :close all tabs except current one
+
+gvim --remote +tabedit hello.py :to open hello.py from any terminal into existin gvim as new tab
+gvim --remote +split hello.py   :to open hello.py from any terminal into existing gvim in split view mode
+
+"""""""""""""""""""to save session of tabs"""""""""""""""
+:mksession work1.vim        :current session of open tabs are stored in work1.vim
+vim -S work1.vim 	    :opens the session
+:source work1.vim           :opens the session
+:mks!			    :to save changes made to the session
+
+
+
+""""""""""""""""""auto completion""""""""""""
+
+Ctrl+n
+
+"""""""""""""""remote editing of file with openssh-clien"""""""""""
+
+For example: I need to edit a file on 10.0.18.12 stored
+ in /home/dev-john/project/src/main.c and I have login 
+credentials for dev-john, I can access the main.c using:
+
+$ vim scp://dev-john@10.0.18.12/project/src/main.c
+
+TIP: If you access a remote machine frequently, you can create an ssh config file to create a shortcut for the connection. Create a file ~/.ssh/config with
+
+Host remote-dev-machine
+    Hostname 10.0.18.12
+    User dev-john
+    IdentityFile ~/.ssh/id_rsa
+
+Now you can access your file using:
+
+$ vim scp://remote-dev-machine/project/src/main.c
+
+If it’s confusing to remember the relative path and not 
+intuitive, you can also specify it with an alternative:
+
+$ vim scp://remote-dev-machine/~dev-john/project/src/main.c
+
+"""""""""""marking"""""""""""""""""
+
+:marks                :opens the local bookmarks
+mp		      :stores location to p
+`p                    :takes you to the stores location
+
+
+
+"""""""""""""'file explorer"""""""""""""""""""""""
+:Ex                         :opens the explore
+:Vex			    :opens it in a vertical split
+:Sex			    :opens it in a horezontal split
+:q			    :to quit window
+:qa!			    :to quit vim
+:Tex			    :opens it in a new tab
+
+:vim .			    :opens the explorer
+%                           :in explorer prompts you to create new file
+Shift+d                     :deletes the selcted file and ask for yes or no
+d		            :to create a new directory
+R			    :to rename file or dirctory
+D                           :delet the file ore directory
+
+"""""""""""""lazy commands"""""""""""""""""""""""""
+
+:e.         :edit
+:sp.        :split
+:vs.	    :vsplit
+:E          :Explore
+:Se	    :Sexplore
+:Vex	    :Vexplore
+:vs         :vsplit
+:sp	    :split
+:ter        :terminal
+:tabe       :tabedit
+""""""""""""""""""""""teminal in vim"""""""""""""""""""""
+:term                       :opens a terminal in vim
+
+
+"""""""""""""run terminal commands from vim"""""""""""
+:!dir                       :opens the directory in a separate terminal
+:sh			    :opens a shell
+:shell			    :opens a shell
+
+""""""line navigation"""""""""""
+
+j          :down arrow
+k          :up   arrow
+l          :right arrow
+h          :left arrow
+o          :go to the starting of the current line
+^          :go the first non blank character of the line
+$          :go to the end of the current line
+g_         :go to the last non blank character of the line
+e          :to move cursor fastly forward
+
+
+21j        :moves cursor up by 21 lines
+21k        :moves cursor down by 21 lines
+21h        :moves cursor left by 21 characters
+21l        :moves cursor right by 21 characters
+
+:+21       :move down 21 lines
+:-21       :moves up 21 lines
+:21        :goes to the 21th line
+
+;     	   :Repeat latest f, t, F or T [count] times.
+,     	   :Repeat latest f, t, F or T in opposite direction [count] times. 
+
+
+@@         :to replay the last used macro
+@:         :to replay the last ex command
+3@r        :does the macro in r 3 times
+
+
+=i{        :indentation will take place when cursor is in a block
+
+""""""screen navigation""""""""""""""
+
+H          :go to the first line of current screen
+M          :go to the middle line of current screen
+L          :go to the last line of current screen
+ctrl+f     :jumb forward one full screen
+ctrl+b     :jumb backwards on full screen
+ctrl+d     :jumb forward(down) a half screen
+ctrl+u     :jumb back(up) one half screen
+ctrl+e     :scroll down
+ctrl+y     :scroll up
+ctrl+k     :help
+
+Notes:
+
+Pressing z and then return will move the current line to the top of the screen. 
+A number will move that line number to the top of the screen, so pressing 50z and 
+then return will make the top of the screen start at line 50. Conversely, z. 
+will move the current line to the centre of the screen, and z- will move to the bottom.
+
+To move within a screen without scrolling it, H is useful because it'll move the cursor 
+to the top line. M shifts it to the middle, and then L moves it to the last line.
+All of these commands are easy to remember with some simple mnemonics:
+    up
+    down
+    forward
+    back
+    Home
+    Middle
+    Last
+
+
+"""""""special navigation"""""""""""""
+N%         :go to the Nth percentage line of the file
+NG         :go to the Nth line of the file
+G          :go to the end of the file
+`"         :go to position where in NORMAL MODE while last closing the file
+`^         :go to position where you where in INSERT MODE while last closing
+``         :go to position where you where in 
+gg         :go to begining of the file
+44G        :go to the 44th line in the file
+"""""""word navigation"""""""""""""""""
+
+e          :go to end of currnt word
+E          :go to end of currnt WORD
+b          :go to previous(befor) word
+B          :go to previous(befor) word
+w          :go to next word
+W          :go to next WORD
+ge         :go to end of previous word
+R          :to replace more than on character
+f{char}    :will move to the next occurrence of {char} withen the current line
+F{char}    :will move to the previous occurence of {char} within the current line
+t{char}    :will move to before the starting character
+T{char}    :will move to after  the starting cahracter
+;          :the last ftFT can be repeated  in forward direction by pressing this
+,	   :the last ftFT can be repeated in backward direction
+
+
+:h work-motions     :to get more detailed help on how to combine them with operations
+
+""""""""paragraph navigation"""""""""""""
+
+{          :go tho begining of current paragraph,repeatedly press { to move to previou paragraph beginings
+}          :go to end of currnt paragraph ,repeatedly press } to move to next paragraph end and again
+(	   :to move to begining of sentense
+(   	   :to move to  end of sentence 
+
+""""""""search navigation"""""""""""""
+
+/i         :search fo a pattern which will take you to next occurrence of it
+?i         :search fo a pattern which will take you to previoys occurence of it
+*          :go to next occurence of current word under the cursor
+#          :go to privious occurence of currnt word undr the cursor
+
+"""""""""command line navigation"""""""""
+
+vim +N filename :go to Nth line of file after opening it
+vim +10 /etc/passwd :go to 10 th line of file passwd
+vim +/install README :it open README file and jump to firstoccurrence of word "install"
+vim +?installDRRADME :it open
+
+"""""""""code navigation"""""""""""""""
+
+%          :go to matching baces ,or parenthesis inside code
+
+
+
+
+"""""""""""split view""""""""""""""""
+files named  foo, bar, cat and dog are present in a directory
+vim foo     		    #opens the file foo
+:sp bar     		    #opens the file bar in split view
+Ctrl+w then direction key   #to move between splits
+Ctrl-w n+       	    #increase size of current split by n lines
+Ctrl-w n-		    #decrease size of current split by n lines
+:sp cat                     #size of current split can be adjusted by Ctrl-w+ and Ctrl-w-
+Ctrl-w 5+<
+Ctrl-w _ 	 	    #quickly maximize the current split
+Ctrl-w =		    #return to equalized splits
+Ctrl-w |                    #max out the width of the current split
+:vsp dog		    #to split to current split vertically and open dog
+:help splits		    #shows help
+
+Ctrl+W R                    #Swap top/bottom or left/right split
+Ctrl+W T                    #Break out current window into a new tabview
+Ctrl+W o 		    #Close every window in the current tabview but the current one
+
+#split manipulations easy navigations
+
+
+We can use different key mappings for easy navigation between splits to save a keystroke. So instead of ctrl-w then j, it’s just ctrl-j:
+
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+
+Open new split panes to right and bottom, which feels more natural than Vim’s default:
+
+set splitbelow
+set splitright
+
+
+
+"""""""""""copy and paste """""""""""""""
+
+yiw 	Yank inner word (copy word under cursor, say "first").
+... 	Move the cursor to another word (say "second").
+ciw<C-r>0 	Change "second", replacing it with "first" (<C-r> is Ctrl-R).
+... 	Move the cursor to another word (say "third").
+. 	Change "third", replacing it with "first". 
+
+
+
+
+
+v          :start visual mode and moves the cursor to highlight it 
+y          :to yank(copy) the highlighted text
+p          :to put (paste) the text,then type :a second <ESC>
+
+For X11-based systems (ie. Linux and most other UNIX-like systems) there are two clipboards which are independent of each other:
+    PRIMARY - This is copy-on-select, and can be pasted with the middle mouse button.
+    CLIPBOARD - This is copied with (usually) ^C, and pasted with ^V (It's like MS Windows).
+OS X and Windows systems only have one clipboard.
+For X11 systems there are also number of tools that synchronize these clipboards for you; so 
+ if they appear to be the same, you may have one of them running.
+Vim has two special registers corresponding to these clipboards:
+    * uses PRIMARY; mnemonic: Star is Select (for copy-on-select)
+    + uses CLIPBOARD; mnemonic: CTRL PLUS C (for the common keybind)
+On Windows & OS X there is no difference between + and *, since these systems only have a single clipboard, and both registers refer to the 
+ same thing (it doesn't matter which one you use).
+You can use these registers as any register. For example, using the PRIMARY clipboard * with the y and p commands:
+    "*yy
+    "*p
+You could maybe use this as more convenient keybinds:
+
+vnoremap Y "*y
+inoremap P "*p
+nnoremap P "*p
+
+
+
+
+"""""""""""copy paste special commands"""""""""""""""""""""""""""""
+d%   	   :delete things within the braces including the braces,if used when on a brace
+v2a)	   :visual select all inside the closed braces including braces
+v2i)       :visual select all insede the closed braces but not the brace
+
+dib        :delete inside bracket
+di(        :delete inside bracket
+di)        :delete inside bracket
+
+d^         :delete till the positon of the cursor
+
+D	   :delete everything from right of line till the cursor
+
+
+3Y         :will yank three whole lines from current line into default register
+i3Y        :will yank three whole lines from current line into register i
+
+yy         :will yank the current line
+
+%y         :in visual mode will yank till the end of the line from the cursor
+y^         :in visual mode will yank till the start of the line from the cursor
+
+gp         :to reselect the same block(which also moves the cursor position where it was before yanking
+`>         :to jump to the end of the visual selectin
+
+vnoremap y y`>o<ESC>  :this mapping allows the cursor to come at end of the text after yank
+noremap p gp            
+noremap gp p          :this mapping moves the cursor position to the end of the text after pasting
+
+
+/	   :search for a word in forward direction
+?	   :search for a word in backward direction
+N          :to get to next occurence of word in search 
+n          :to get to previous occurence of word in search
+"""""""""""""""other useful commands"""""""""""""""""""""""""""""""
+
+Esc        :puts you in normal mode
+:q!        :exits the editor without saving
+i          :to insert any text
+a          :to insert any text
+A          :to append text to any line
+x          :deletes when not in insert mode
+:wq        :save the file with changes and exit vim 
+dw         :delete until the start of the next word, EXCLUDING its first character.
+de         :delete to the end of the current word, INCLUDING the last character.
+d$         :delete to the end of the line, INCLUDING the last character.
+u          :to undo the last made chage
+/          :start a search to find the word you want
+gg         :to move to the top of the file
+G          :to move to the bottom of the file
+zz         :to recenter the page so that your cursor is at the center
+CTRL+F     :to move forward quickly
+CTRL+B     :to move backward quickly
+%          :click % when on a bracket such as '{'or '('to move to the other matching bracket
+help command: can find help on any command or subject
+
+""""""""""'delete everything""""""""""""
+    Go to command mode in the editor by pressing ESC key on the keyboard.
+    Press gg. It will take to the first line of the file.
+    Then press dG. This will delete from the first line to the last line.
+
+
+
+"""""""""""""create a startup script"""""""""""""
+:e ~/.vimrc    :for unix this opens and allow to edit .vimrc file
+:e $VIM/_vimrc :for windows
+:e $MYVIMRC    :for windows
+:r $VIMRUNTIME/vimrc_example.vim   :read the example "vimrc" file contents:
+:w                                 : writes the file
+help vimrc-intro                   :open help on the topic
+
+
+"""""""""""""completion"""""""""""""""""""
+:set nocp          :makes sure vim is not in compatible mode
+:!ls or :!dir      :look what files exist in the directory
+CTRL-D             :start a command :e and press CTRL-D it will show list of commands start with "e"
+:e<TAB>            :autocompletes it and shows each completion on pressing
+
+
+
+"""""""""""indentation""""""""""""""""""
+Put the cursor anywhere in the first line.
+Press V then jj to visually select the three lines.
+Press Shift+> to indent (shift text one 'shiftwidth' to the right), or press Shift+< to shift left.
+Press . to repeat the indent, or u to undo if you have shifted too far.
+Type gv if you want to reselect the lines (not needed).  
+
+Type 3>> to shift right or 3<< to shift left. 
+Type >2j to shift right or <2j to shift left. v
+
+
+
+"""""""""""startup scriptscommandss"""""""""""""""""""""""""""""""""""""""""""""""""
+:set relativenumber  :enables relative numbering
+:set nu              :enables nubering
+:set eb? vb? t_vb?   :displays the default settings
+:set vb              :to set visual bell
+:set t_vb=           :to clear the t_vb option(so that it will do nothing,the t_vb option controls how vim flashes the screen)
+:set vb&             :sets the vb value to its default value
+:set t_vb&           :sets the t_vb value to default value
+
+:set nobackup        :no backup files
+:set nowritebackup   :to have no backup files while editing
+:set noswapfile      :no swap files
+
+For Windows Users to back to temp directory
+set backup
+set backupdir=C:\WINDOWS\Temp
+set backupskip=C:\WINDOWS\Temp\*
+set directory=C:\WINDOWS\Temp
+set writebackup
+
+""""""""""""In my parrot OS""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+vi         :opens neovim
+vim        :opens neovim
+nvim       :opens neovim
+vim.basic  :opens vim
+vim.basic features are stored at /home/trainer/.vimrc
+neovim features are stored at /home/trainer/.config/nvim/init.vim
+
+
+
+
+******NOTES**************
+=>text objects and motions
+=>DOT command
+=>macros
+
+Text objects
+w-words
+s-sentences
+p-paragraphs
+t-tags
+
+Motions
+a-all
+i-in
+t-until something
+f-find forward
+F-find backward
+
+Commands
+d-delete(also cut)
+c-change(delete,then place in insert mode)
+y-yank(copy)
+v-visually select
+p-paste
+
+yy    -yank the current line, including the newline character atthe end of the line
+y$    -yank to the end of the current line (but don't yank the newlinejucharacter); note that many people like to r map Y to y$ in line with C and D
+yiw   -yank the current word (excluding surrounding whitespace) 
+yaw   -yank the current word (including leading or trailingwhitespace)
+ytx   -yank from the current cursor position up to and before the character (til x) 
+yfx   -yank from the current cursor position up to and including the character(find x)
+
+
+2dw   -delete next 2 words
+diw   -delete inside the whole word when inside the word
+caw   -change all word
+yi)   -yank all text inside parentheses
+dt< > -delete until the space
+df< > -delete until the space including the space
+da[   -deletes including the bracket
+di[   -deletes inside the bracket
+va"   -visually select all inside doublequotes including doublequotes
+di"   -deletes inside the ""
+
+caw   -change all word
+ciw   -change inside word
+
+
+
+DOT command
+.     -repeats the previous command
+
+
+
+Macro (a sequence of commands recorded to a register,sinsce not everythin isrepeatable with DOT command)
+after recording to a register you can save them to the .vimrc file so that it
+will be loaded up too
+
+Record a macro
+ q{register}
+ (do the things)
+ q
+
+Play a macro
+ @{register}
+
+
+Record a position(mark a position using a register)
+ m{register}    -marks your position to the register
+ `register      -will take you to the marked location
+
+
+:reg   -opens the registry
+
+
+Additional commands
+dd     -delete the current line (cut)
+yy     -yank the current line
+D      -delet until end of line
+C      -change until end of line
+I      -move to begining of lin and insert
+A      -move to begining of lin and insert
+o      -insert new line above current line
+O      -insert new line below current line
+
+earlier 2m -takes the file to condition it was 2 minutes ago
+
+
+
+Changing a word at n positions
+
+In vim selecting and editing is one step. This can be done with the
+gn text-object. Normally you will search for a word you want to change and 
+the change the next found occurrence with cgn once and then use vim’s most
+powerful command the . (dot). Using . you can apply the change to the next
+word or skip one word with n which will jump to the next word.
+The text-object gn works like other text-objects with all commands. 
+You can for example use it with d to delete the matches.
+
+""""""""""""""""""""""""""""Plugins"""""""""""""""""""""""""""""
+
+"""""""""""""""""installing plugins vim-plug"""""""""""""""""""""""""""""""""""""
+
+
+https://github.com/junegunn/vim-plug
+
+
+
+
+"""""""""""Commands"""""""""""""""""""""""""""""
+Command 	Description
+PlugInstall [name ...] [#threads] 	Install plugins
+PlugUpdate [name ...] [#threads] 	Install or update plugins
+PlugClean[!] 	Remove unlisted plugins (bang version will clean without prompt)
+PlugUpgrade 	Upgrade vim-plug itself
+PlugStatus 	Check the status of plugins
+PlugDiff 	Examine changes from the previous update and the pending changes
+PlugSnapshot[!] [output path] 	Generate script for restoring the current snapshot of the plugins
+
+""""""""""Plug options
+Option 	Description
+branch/tag/commit 	Branch/tag/commit of the repository to use
+rtp 	Subdirectory that contains Vim plugin
+dir 	Custom directory for the plugin
+as 	Use different name for the plugin
+do 	Post-update hook (string or funcref)
+on 	On-demand loading: Commands or <Plug>-mappings
+for 	On-demand loading: File types
+frozen 	Do not update unless explicitly specified
+
+""""""""""Global options
+Flag 	Default 	Description
+g:plug_threads 	16 	Default number of threads to use
+g:plug_timeout 	60 	Time limit of each task in seconds (Ruby & Python)
+g:plug_retries 	2 	Number of retries in case of timeout (Ruby & Python)
+g:plug_shallow 	1 	Use shallow clone
+g:plug_window 	vertical topleft new 	Command to open plug window
+g:plug_pwindow 	above 12new 	Command to open preview window in PlugDiff
+g:plug_url_format 	https://git::@github.com/%s.git 	printf format to build repo URL (Only applies to the subsequent Plug commands)
+Keybindings
+
+    D - PlugDiff
+    S - PlugStatus
+    R - Retry failed update or installation tasks
+    U - Update plugins in the selected range
+    q - Close the window
+    :PlugStatus
+        L - Load plugin
+    :PlugDiff
+        X - Revert the update
+
+
+Example: A small sensible Vim configuration
+
+call plug#begin()
+Plug 'tpope/vim-sensible'
+call plug#end()
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Modern Vim is a great title and captures the significance of Vim 8 and Neovim: 
+both of these versions add key features that streamline plugin management and improve
+the responsiveness of Vim’s UI (even in text mode!).
+One of the main innovations in Vim 8 is asynchronous I/O, which allows plugins to 
+communicate with other processes without interrupting the UI. If you’ve ever used 
+a plugin that extends Vim’s search or autocomplete behaviour then you’ve probably 
+noticed that the UI blocks while results are displayed.
+Asynchronous I/O totally changes the behaviour of Vim, adding interactive features
+ that are typically only enjoyed in GUI editors. Editors like Atom and Visual Studio
+ Code come with real-time autocompletion out of the box, and although this can feel
+ noisy and distracting to old school Vim users like me, it is definitely useful when
+ working on new or complex projects.
+If you’re not yet a Vim 8 or Neovim convert, then I recommend setting up a new 
+installation of Neovim with asynchronous plugins in mind. The first plugin that I
+ discovered had a real benefit to my workflow was w0rp/ale, an asynchronous linting
+ engine. In my older Vim setup the linter only ran when I saved a file, but ale runs
+ without any invocation.
+
+
+syntastic    -its hooked into the js lint(syntax manager/linte) and js cs(java script code style) plugins
+vundle       -plugin manager
+vim-plug    -plugin manager
+nerdtree     -file drawer
+ctrlp        -is  a fuzzy file finder, but fzf offfers better performance
+fugitive     -git tool
+vimux        -allow you to interact with tmux from vim
+w0rp/ale     -an asynchronous linting engine
+
+roxma/nvi-completion-manager -give the kind of autocompletion you have wite atom editor
+tern completion script       -this vastly improves javascript completion but requires an
+			      npm install to get evrything ready.I was able to run 
+			      npm automatically by using Vim Plug's do option:
+			      Plug 'roxma/nvim-completion-manager'
+			      Plug 'roxma/nvim-cm-tern', {'do': 'npm install'}
+
+fzf            https://github.com/junegunn/fzf.vim
+	     -I use fuzzy finding all the time because I tend to remember file names
+	      rather than a file’s exact location in the source tree. Installing fzf 
+              requires some Python packages, so make sure you follow the readme
+              properly. You’ll also want fzf.vim which adds some handy Vim scripts 
+              for working with fzf. The fzf.vim bundle can do things like search 
+              files, Git, buffers, Ctags, and many more lists of things.
+	      Working on a substantial codebase usually involves traversing several 
+	      files at a time. fzf stands for “fuzzy finder” and works similarly to 
+	      the Goto Anything menu in Sublime Text, allowing you to open a file 
+              instantly after typing a rough representation of its name.
+	      Whilst CtrlP has existed for a while, fzf offers significantly better
+	      performance. You can activate the search pane with the :Files command,
+	      but I use this so often that I’ve mapped it to a single key.
+			map ; 
+		:Files<CR>
+	      fzf is actually its own terminal command as well, which you can use to
+	      get the same awesome file searching functionality anywhere.
+
+lightline         https://github.com/itchyny/lightline.vim
+		Many users like to use a plugin to replace their statusline — whether as an improved visual aid (particularly in split panes), or just to make their editor more attractive. For me, lightline is an elegant and versatile choice.
+		The default layout is pretty clean, displaying the current mode with some nice colour feedback, as well as the file name, file properties and cursor position. It’s easy to configure what to show in each section in your .vimrc file, and there’s also a choice of built-in colour schemes.
+
+		let g:lightline = {
+		  \     'active': {
+		  \         'left': [['mode', 'paste' ], ['readonly', 'filename', 'modified']],
+ 		  \         'right': [['lineinfo'], ['percent'], ['fileformat', 'fileencoding']]
+		  \     }
+ 		  \ }
+
+vim-multiple-cursors      https://github.com/terryma/vim-multiple-cursors
+		This is another plugin bringing a much-loved Sublime feature to Vim, doing exactly what it says in the name. You’ve got to love multiple selections.
+		To make a basic selection, use the Ctrl+N keystroke in normal mode, followed by a motion:
+
+		    c – change text.
+		    I – insert at start of range.
+		    A – insert at end of range.
+
+		More actions can be found in the plugin’s quick start information.
+
+vim-eunuch		https://github.com/tpope/vim-eunuch
+		This cryptically-named plugin adds a dozen core Unix file operations as Vim commands in the context of the current file. :!mv no more!
+		:Rename new_name.sh
+		:Chmod +x
+		:SudoWrite
+		These small helpers add up fast to not breaking your Vim workflow. All commands are documented in the project README.
+
+surround		https://github.com/tpope/vim-surround
+		In a graphical text editor, typing an open bracket or quotes on a 
+		selected region will wrap or surround that region with with a 
+		matching pair of characters.
+		With this plugin, you can do that and more — with motions to add, change or remove surrounding characters and strings in a variety of ways. Definitely check out the docs for this one.
+
+NERDTree   		https://github.com/scrooloose/nerdtree   
+		NERDTree is a popular plugin to display an interactive file tree view
+	        in a side panel, which can be useful when working in larger project. I have the NERDTreeToggle command mapped to Ctrl+O.
+			map <C-o> :NERDTreeToggle<CR> 
+
+EditorConfig		https://github.com/editorconfig/editorconfig-vim
+		EditorConfig is a multi-editor tool for defining base file handling 
+		and code style preferences in a project and aligning these between 
+		editors. With this plugin, rulesets defined in a local .editorconfig file will automatically configure Vim settings such as indentation size, and apply formatting such as removing trailing whitespace on save.
+
+		root = true[*]
+		charset = utf-8
+		indent_style = space
+		indent_size = 4
+		trim_trailing_whitespace = true
+		insert_final_newline = true[*.md]
+		trim_trailing_whitespace = false
+
+		This is a boon for everyone, and prevents incoming developers from
+                altering their default preferences manually when working between projects. Recommended for every editor you use.    
+
+NOTE:
+Neovim still offers one large feature over Vim 8: an integrated terminal.
+By typing :term you can open a terminal that works like any other Vim buffer.
+That means you can quickly perform Git commands or any other project lifecycle 
+tasks. The biggest strength of using a terminal embedded in the editor is for 
+a REPL-based workflow: you can quickly yank code in and out of an interpreter to 
+try out code as you’re working. It’s very similar to the benefits of working with 
+split windows in tmux or iTerm 2, except the editor integration means all of your
+vim editing and movement shortcuts work seamlessly.
+
+Any command-line tool that you enjoy using alongside Vim can be used in Neovim’s 
+split terminal. For example, if you like using tig, the text-mode Git interface, 
+then you can open a panel that runs tig! This instantly gives you the power of 
+integrated Git, without waiting for Neovim or a plugin author to add this 
+functionality. Again, this usage is similar to the benefits of using tmux alongside
+command-line Vim, but you might prefer the integrated approach because it adds a 
+modal layer for movement and yank/paste over tig.
+
+
+"""""""""""""""""Tmux""""""""""""""""""""""
+Tmux (terminal multiplexer view and control multiple consoles preconfigure environments)
+Tmate(allows you to do pair programming with remote teammates)
+
+
+tmux new-session -s {session-name}
+
+
+sudo apt-get install caca-utils          :now run "cacademo" and you'll see a selection of crazy swirling and dripping text effects
+
+
+""""""""""""""""""""""""""""""""""""""""""""
+
+
+Note:   How to paste from an external source on VI/VIM 
+	Just use Shift+Insert or right-click -> paste like you normally do? As long as vi is in 'insert' mode. 
+	Alternatively upload the file and open it in the same vim instance (:split,
+	:vsplit or :tabedit), y,<number of lines>,y to copy and p to paste. 
+	To navigate between tabs type gt, between split panes use Ctrl+W,
+
+
+
+"""""""""""""""help commands""""""""""""""
+help vimrc-inrto
+help i_CTRL-R
+help c_CTRL-R
+
+
+
+""""""""""""colorscheme"""""""""""""""""""""""""""""""
+If you want to change Vim's color scheme, simply start a Vim session and type the command:
+:colorscheme
+To see the default color schemes available to you, enter:
+:colorscheme + space + tab
+By tapping the Tab key, you can cycle through the available schemes
+
+Once you've found a theme you like from other source:
+    Create a Vim directory with:
+    mkdir ~/.vim
+
+    Clone the repo to your Vim folder with:
+    git clone <https://github.com/flazz/vim-colorschemes.git> ~/.vim
+
+Now, if you open Vim and use the colorscheme command along with the name 
+of your chosen new theme (e.g., if you want cooltheme.vim, use :colorscheme cooltheme), it should be ready to use!
+To ensure Vim always uses your chosen them when you launch the application,
+enter the following (you may need to be in sudo/root mode):
+
+echo 'colorscheme <desert>' >> ~/.vimrc
+
+
+"""""""""""""""""""""""""""My .vimrc""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"To enable numbering
+set nu
+
+
+"To disable beeping and window flashing put the following in vimrc
+set noerrorbells visualbell t_vb=
+if has('autocmd')
+  autocmd GUIEnter * set visualbell t_vb=
+endif
+
+
+"press ii to return to normal mode in insert mode 
+inoremap ii <ESC>
+inoremap <ESC> <NOP>
+" Press ii to return to normal mode when in visual mode
+vnoremap ii <ESC>
+vnoremap <ESC> <NOP>
+" Press ii when in Command mode, to go back to normal mode
+cnoremap ii <ESC>
+
+
+"Press <C-r> to scrol up instead of <C-y> in visual and normal mode
+nnoremap <C-y> <C-r>
+nnoremap <C-r> <C-y>
+vnoremap <C-y> <C-r>
+vnoremap <C-r> <C-y>
+
+"Press <C-f> to move(up) one half screen
+nnoremap <C-f> <C-u>
+nnoremap <C-u> <C-f>
+
+"To enable mouse functionality
+set mouse=a
+"To disable mouse only in insert mode since in when in terminal
+" vim the using mouse cause insertion of unwanted characters in insert mode
+"set mouse=n
+
+
+
+
+
+"To not create temporary files after editing
+set nobackup
+
+"To use Y to yank from vim to systems clipboard in visual mode
+vnoremap Y "*y
+"To use P to paste from systems clipboard to vim in normal mode
+nnoremap P "*p
+
+"Press s to move back word by word in visual and normal mode
+nnoremap s b
+nnoremap b s
+vnoremap s b
+vnoremap b s
+
+
+"gui settings
+if has('gui_running')
+  set guioptions-=T  " no toolbar
+  colorscheme torte 
+  set lines=50 columns=80 linespace=0
+  if has('gui_win32')
+    set guifont=Lucida_Console:h11:cANSI
+  else
+    set guifont=DejaVu\ Sans\ Mono\ 10
+  endif
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+********************Basic search and replaceEdit*****************
+
+The :substitute command searches for a text pattern, and replaces it with a text string. There are many options, but these are what you probably want:
+
+:%s/foo/bar/g
+    Find each occurrence of 'foo' (in all lines), and replace it with 'bar'. 
+
+:s/foo/bar/g
+    Find each occurrence of 'foo' (in the current line only), and replace it with 'bar'. 
+
+:%s/foo/bar/gc
+    Change each 'foo' to 'bar', but ask for confirmation first. 
+
+:%s/\<foo\>/bar/gc
+    Change only whole words exactly matching 'foo' to 'bar'; ask for confirmation. 
+
+:%s/foo/bar/gci
+    Change each 'foo' (case insensitive due to the i flag) to 'bar'; ask for confirmation. 
+    :%s/foo\c/bar/gc is the same because \c makes the search case insensitive. 
+    This may be wanted after using :set noignorecase to make searches case sensitive (the default). 
+
+:%s/foo/bar/gcI
+    Change each 'foo' (case sensitive due to the I flag) to 'bar'; ask for confirmation. 
+    :%s/foo\C/bar/gc is the same because \C makes the search case sensitive. 
+    This may be wanted after using :set ignorecase to make searches case insensitive. 
+
+The g flag means global – each occurrence in the line is changed, rather than just the first. 
+This tip assumes the default setting for the 'gdefault' and 'edcompatible' option (off), 
+which requires that the g flag be included in %s///g to perform a global substitute. 
+Using :set gdefault creates confusion because then %s/// is global, whereas %s///g is 
+not (that is, g reverses its meaning).
+
+When using the c flag, you need to confirm for each match what to do. 
+Vim will output something like: replace with foobar (y/n/a/q/l/^E/^Y)? 
+(where foobar is the replacement part of the :s/.../.../ command. You 
+can type y which means to substitute this match, n to skip this match, 
+a to substitute this and all remaining matches ("all" remaining matches), 
+q to quit the command, l to substitute this match and quit (think of "last"), 
+^E to scroll the screen up by holding the Ctrl key and pressing E and ^Y to 
+scroll the screen down by holding the Ctrl key and pressing Y. However, 
+the last two choices are only available, if your Vim is a normal, big or 
+huge built or the insert_expand feature was enabled at compile time 
+(look for +insert_expand in the output of :version).
+
+Also when using the c flag, Vim will jump to the first match it finds 
+starting from the top of the buffer and prompt you for confirmation to 
+perform replacement on that match. Vim applies the IncSearch highlight 
+group to the matched text to give you a visual cue as to which match it 
+is operating on (set to reverse by default for all three term types 
+as of Vim 7.3). Additionally, if more than one match is found and you 
+have search highlighting enabled with :set hlsearch, Vim highlights the 
+remaining matches with the Search highlight group. If you do use search 
+highlighting, you should make sure that these two highlight groups are 
+visually distinct or you won't be able to easily tell which match Vim 
+is prompting you to substitute. 
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
