@@ -1,0 +1,265 @@
+
+" Vim with all enhancements
+source $VIMRUNTIME/vimrc_example.vim
+
+" Use the internal diff if available.
+" Otherwise use the special 'diffexpr' for Windows.
+if &diffopt !~# 'internal'
+  set diffexpr=MyDiff()
+endif
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg1 = substitute(arg1, '!', '\!', 'g')
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg2 = substitute(arg2, '!', '\!', 'g')
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  let arg3 = substitute(arg3, '!', '\!', 'g')
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      if empty(&shellxquote)
+        let l:shxq_sav = ''
+        set shellxquote&
+      endif
+      let cmd = '"' . $VIMRUNTIME . '\diff"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    endif
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  let cmd = substitute(cmd, '!', '\!', 'g')
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+  if exists('l:shxq_sav')
+    let &shellxquote=l:shxq_sav
+  endif
+endfunction
+
+
+"Additional changes
+
+"To add side numbering
+"set nu
+
+"To set relative lin numbering
+set relativenumber
+
+
+"To add spacebar as mapleader
+let mapleader = " "
+
+"To save(write) and quit by pressing leader and q
+nmap <leader>q :q<cr>
+nmap <leader>e :wq<cr>
+
+
+
+"To save(write) and open command mode by pressing leader and w
+nmap <leader>w :w<cr>
+
+
+"To enter command mode by pressing <F5>
+nmap <F5> :
+
+
+"To open NERDTree just write <space>ne in normal mode
+nmap <leader>n :NERDTree<cr>
+
+
+
+
+" Show file options above the command line
+set wildmenu
+
+" Don't offer to open certain files/directories
+set wildignore+=*.bmp,*.gif,*.ico,*.jpg,*.png,*.ico
+set wildignore+=*.pdf,*.psd
+set wildignore+=node_modules/*,bower_components/*
+
+" nmap <leader>f :e ..\**/*
+" nmap <leader>vf :vs **/*
+
+nmap <leader>f :fin 
+
+" Set the working directory to wherever the open file lives
+set autochdir
+"to toogle autochange directory 
+"nmap <leader>cd :set autochdir!<cr>
+
+ 
+"To open netrw file explorer  in vertical split by pressing <leader>ve in normal mode
+"nmap <leader>ve :Vex<cr>
+"To open netrw file explorer by pressing <leader>ve in normal mode
+"nmap <leader>e :Ex<cr>
+
+"Use Alt to navigat in split  screens
+"nmap ê <C-w>j
+"nmap ì <C-w>l
+"nmap è <C-w>h
+"nmap ë <C-w>k
+nmap <leader>h <C-w>h
+nmap <leader>j <C-w>j
+nmap <leader>k <C-w>k
+nmap <leader>l <C-w>l
+
+
+
+" Press ii  to return to normal mode when in insert mode
+"inoremap é <ESC>  
+"inoremap <ESC> <NOP>
+inoremap ii <ESC>
+"inoremap <ESC> <NOP>
+
+" Press ii to return to normal mode when in visual mode
+"vnoremap ii <ESC>
+"vnoremap <ESC> <NOP>
+
+"vnoremap é <ESC>
+"vnoremap <ESC> <NOP>
+
+" Press ii when in Command mode, to go back to normal mode
+"cnoremap ii <ESC>
+
+"cnoremap é <ESC>
+
+
+
+" Press <F5> in command mode to move up
+cnoremap <F5> <Up>
+
+
+
+
+" Press <C-r> to scrol up instead of <C-y> in visual and normal mode
+"nnoremap <C-y> <C-r>
+"nnoremap <C-r> <C-y>
+"vnoremap <C-y> <C-r>
+"vnoremap <C-r> <C-y>
+
+
+" Press <C-f> to move(up) one half screen
+"nnoremap <C-e> <C-u>
+"nnoremap <C-u> <C-e>
+
+" Press <C-a> to autocomplete instead of <C-n>
+"inoremap <C-a> <C-n>
+"inoremap <C-n> <C-a>
+
+
+" Press Y to yank to systems clipboard from vim
+vnoremap Y "*y
+" Press P to paste from systems clipbard to vim
+nnoremap P "*p
+"vnoremap P "*p
+
+
+
+" Press s to move back word by word in normal mode
+"nnoremap s b
+"nnoremap b s
+"vnoremap s b
+"vnoremap b s
+
+
+
+
+" use gp instead of p to leave the cursor after the pasted text
+"noremap p gp
+"noremap gp p
+
+" use gy instead of p to leave the cursor after the pasted text
+"vnoremap y y`><ESC>
+"vnoremap gy y
+"noremap y gy 
+"noremap gy y
+
+
+
+
+
+
+"   :set eb? vb? t_vb?
+"vim will display the default settings
+set noerrorbells visualbell t_vb=
+if has ('autocmd')
+	autocmd GUIEnter * set visualbell t_vb=
+endif
+
+
+"To not create temporary files after editing
+"For Windows Users to back to temp directory
+
+"set nobackup
+set backupdir^=%userprofile%/.vim/tmp//
+set directory^=%userprofile%/.vim/tmp//
+set undodir^=%userprofile%/.vim/tmp//
+
+"To enable scrolling using mouse
+
+set mouse=a
+
+let g:auto_save=1
+"To enable autosave
+"let g:auto_save=1
+
+
+
+"***************gui_settings**************
+
+"if has('gui_running')
+"  set guifont=Lucida_Console:h11
+"endif
+"set guiheadroom=80 "the whole screen height will be used by the window
+
+if has('gui_running')
+  set guioptions-=T  " no toolbar 
+  set guioptions-=m  " no menubar
+  set guioptions-=r  " no scrollbar
+  set guioptions-=R  " no scrollbar
+  set guioptions-=l  " no scrollbar
+  set guioptions-=L  " no scrollbar
+  colorscheme torte 
+  set lines=50 columns=80 linespace=0
+  if has('gui_win32')
+    set guifont=Lucida_Console:h11:cANSI
+  else
+    set guifont=DejaVu\ Sans\ Mono\ 10
+  endif
+endif
+
+
+
+"if &term =~ "^xterm"
+"  let &t_SI = "\<Esc>[6 q"
+"  let &t_SR = "\<Esc>[4 q"
+"  let &t_EI = "\<Esc>[2 q"
+"endif
+"let &t_EI .= "\<Esc>[0 q" "2block cursor for normal mode;Ending Insert mode
+"let &t_SI .= "\<Esc>[6 q" "I beam cursor for insert mode;Starting Insert mode
+"let &t_SR = "\<Esc>[3 q" "underline cursor for replace mode
+
+"""""""""""Plugins""""""""""""""""
+" Specify a directory for plugins
+" - Avoid using standard Vim directory names like 'plugin'
+
+call plug#begin('~/.vim/plugged')
+
+Plug 'scrooloose/nerdtree'
+
+Plug '907th/vim-auto-save'
+
+Plug 'itchyny/lightline.vim'
+
+"Plug 'tpope/vim-surround'
+
+"Plug 'jiangmiao/auto-pairs'
+
+
+call plug#end()
+
+
